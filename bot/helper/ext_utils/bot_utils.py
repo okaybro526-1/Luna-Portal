@@ -116,7 +116,7 @@ def get_readable_message():
         msg += f"<b><i>{escape(f'{download.name()}')}</i></b>\n\n"
         msg += f"<b>┌ {download.status()} with {download.engine}</b>"
         if download.status() not in [MirrorStatus.STATUS_SPLITTING, MirrorStatus.STATUS_SEEDING]:
-            msg += f"\n<b>├ <a href='https://github.com/5hojib/Luna-Portal'>{get_progress_bar_string(download.progress())}</a></b> {download.progress()}"
+            msg += f"\n<b>├ [{get_progress_bar_string(download.progress())}]</b> {download.progress()}"
             msg += f"\n<b>├ Processed</b>: {download.processed_bytes()} of {download.size()}"
             msg += f"\n<b>├ Speed</b>: {download.speed()}"
             msg += f"\n<b>├ Estimated</b>: {download.eta()}"
