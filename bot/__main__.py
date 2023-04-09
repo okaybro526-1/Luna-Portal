@@ -67,19 +67,25 @@ async def stats(client, message):
     await sendMessage(message, stats)
 
 async def start(client, message):
+    buttons = ButtonMaker()
+    buttons.ubutton("Owner", "https://t.me/pro_noober")
+    reply_markup = buttons.build_menu(1)
     if config_dict['DM_MODE']:
         start_string = 'Bot Started.\n' \
                     'Now I will send your files or links here.\n'
 
     if await CustomFilters.authorized(client, message):
-        start_string = f'''Welcome Authorised user ✅'''
+        start_string = f'''Welcome Authorised user ⭐
+This bot can mirror all your links|files|torrents to Google Drive or any rclone cloud or to telegram.
+Type /{BotCommands.HelpCommand} to get a list of available commands
+'''
 #        await sendMessage(message, start_string)
 
     else:
         start_string = 'Looks Like you are not an authorised user\n' \
                     'Get youself authorized by @pro_noober\n'
               
-    await sendMessage(message, start_string)
+    await sendMessage(message, start_string, reply_markup)
 
 async def restart(client, message):
     restart_message = await sendMessage(message, "Restarting...")
