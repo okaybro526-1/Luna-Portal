@@ -70,9 +70,14 @@ async def start(client, message):
     if config_dict['DM_MODE']:
         start_string = 'Bot Started.\n' \
                     'Now I will send your files or links here.\n'
+
+    if await CustomFilters.authorized(client, message):
+        start_string = f'''Welcome Authorised user ✅'''
+#        await sendMessage(message, start_string)
+
     else:
-        start_string = 'Welcome To One Of A Modified Anasty Mirror Bot\n' \
-                    'This bot can Mirror all your links To Google Drive!\n'
+        start_string = 'Looks Like you are not an authorised user\n' \
+                    'Get youself authorized by @pro_noober\n'
               
     await sendMessage(message, start_string)
 
