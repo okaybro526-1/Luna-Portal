@@ -164,10 +164,12 @@ class RcloneTransferHelper:
         else:
             return True
 
+#copy pasted from jmdkh repo
+
+
     async def upload(self, path, size):
+        self.__is_upload = True
         rc_path = self.__listener.upPath.strip('/')
-        if rc_path == 'rc':
-            rc_path = config_dict['RCLONE_PATH']
         if rc_path.startswith('mrcc:'):
             rc_path = rc_path.split('mrcc:', 1)[1]
             oconfig_path = f'rclone/{self.__listener.message.from_user.id}.conf'
@@ -197,7 +199,8 @@ class RcloneTransferHelper:
                 fremote = f'sa{self.__sa_index:03}'
                 LOGGER.info(f'Upload with service account {fremote}')
 
-        cmd = await self.__getUpdatedCommand(fconfig_path, path, f'{fremote}:{rc_path}')
+        rcflags = self.__listener.rcFlags or config_dict['RCLONE_FLAGS']
+        cmd = await self.__getUpdatedCommand(fconfig_path, path, f'{fremote}:{rc_path}', rcflags)
         if remote_type == 'drive' and not config_dict['RCLONE_FLAGS'] and not self.__listener.rcFlags:
             cmd.extend(('--drive-chunk-size', '64M',
                        '--drive-upload-cutoff', '32M'))
@@ -214,36 +217,7 @@ class RcloneTransferHelper:
             files = 1
 
         if remote_type == 'drive':
-            if mime_type == 'Folder':
-                epath = rc_path.strip('/').rsplit('/', 1)
-                epath = f'{oremote}:{epath[0]}' if len(
-                    epath) > 1 else f'{oremote}:'
-                destination = f'{oremote}:{rc_path}'
-            elif rc_path:
-                epath = f"{oremote}:{rc_path}/{self.name}"
-                destination = epath
-            else:
-                epath = f"{oremote}:{rc_path}{self.name}"
-                destination = epath
-
-            cmd = ['rclone', 'lsjson', '--fast-list', '--no-mimetype',
-                   '--no-modtime', '--config', oconfig_path, epath]
-            res, err, code = await cmd_exec(cmd)
-
-            if self.__is_cancelled:
-                return
-
-            if code == 0:
-                result = loads(res)
-                fid = 'err'
-                for r in result:
-                    if r['Path'] == self.name:
-                        fid = r['ID']
-                link = f'https://drive.google.com/drive/folders/{fid}' if mime_type == 'Folder' else f'https://drive.google.com/uc?id={fid}&export=download'
-            elif code != -9:
-                LOGGER.error(
-                    f'while getting drive link. Path: {destination}. Stderr: {err}')
-                link = ''
+            link, destination = await self.__get_gdrive_link(oconfig_path, oremote, rc_path, mime_type)
         else:
             if mime_type == 'Folder':
                 destination = f"{oremote}:{rc_path}"
@@ -255,17 +229,21 @@ class RcloneTransferHelper:
             cmd = ['rclone', 'link', '--config', oconfig_path, destination]
             res, err, code = await cmd_exec(cmd)
 
-            if self.__is_cancelled:
-                return
-
             if code == 0:
                 link = res
             elif code != -9:
                 LOGGER.error(
                     f'while getting link. Path: {destination} | Stderr: {err}')
                 link = ''
+        if self.__is_cancelled:
+            return
         LOGGER.info(f'Upload Done. Path: {destination}')
         await self.__listener.onUploadComplete(link, size, files, folders, mime_type, self.name, destination)
+
+
+
+
+
 
     async def __getUpdatedCommand(self, config_path, source, destination):
         ext = '*.{' + ','.join(GLOBAL_EXTENSION_FILTER) + '}'
