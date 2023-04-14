@@ -31,9 +31,9 @@ if DATABASE_URL:
     if config_dict := db.settings.config.find_one({'_id': bot_id}):  #retrun config dict (all env vars)
         conn.close()
 
-UPSTREAM_BRANCH = 'jmdkh'
+UPSTREAM_BRANCH = 'master'
 
-if UPSTREAM_REPO := 'https://github.com/okaybro526-1/Luna-Portal':
+if UPSTREAM_REPO := 'https://github.com/okaybro526-1/jmdkh-mltb':
     if ospath.exists('.git'):
         srun(["rm", "-rf", ".git"])
 
