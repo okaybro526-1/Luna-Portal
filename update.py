@@ -33,7 +33,7 @@ if DATABASE_URL:
 
 UPSTREAM_BRANCH = 'master'
 
-if UPSTREAM_REPO := 'https://github.com/okaybro526-1/jmdkh-mltb':
+if UPSTREAM_REPO := 'https://github.com/okaybro526-1/aayinanew':
     if ospath.exists('.git'):
         srun(["rm", "-rf", ".git"])
 
