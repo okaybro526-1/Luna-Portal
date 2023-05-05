@@ -31,9 +31,10 @@ if DATABASE_URL:
     if config_dict := db.settings.config.find_one({'_id': bot_id}):  #retrun config dict (all env vars)
         conn.close()
 
-UPSTREAM_BRANCH = 'render'
+UPSTREAM_BRANCH = 'master'
 
-if UPSTREAM_REPO := 'https://github.com/okaybro526-1/aayinanew':
+#Earlier https://github.com/okaybro526-1/aayinanew
+if UPSTREAM_REPO := 'https://github.com/okaybro526-1/jmdkh-mltb':
     if ospath.exists('.git'):
         srun(["rm", "-rf", ".git"])
 
