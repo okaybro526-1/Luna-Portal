@@ -31,10 +31,10 @@ if DATABASE_URL:
     if config_dict := db.settings.config.find_one({'_id': bot_id}):  #retrun config dict (all env vars)
         conn.close()
 
-UPSTREAM_BRANCH = 'master'
+UPSTREAM_BRANCH = 'render'
 
 #Earlier https://github.com/okaybro526-1/aayinanew
-if UPSTREAM_REPO := 'https://github.com/okaybro526-1/jmdkh-mltb':
+if UPSTREAM_REPO := 'https://github.com/okaybro526-1/aayinanew':
     if ospath.exists('.git'):
         srun(["rm", "-rf", ".git"])
 
@@ -48,6 +48,6 @@ if UPSTREAM_REPO := 'https://github.com/okaybro526-1/jmdkh-mltb':
                      && git reset --hard origin/{UPSTREAM_BRANCH} -q"], shell=True)
 
     if update.returncode == 0:
-        log_info(f'Successfully updated with latest commit from Xtrons Repository')
+        log_info(f'Successfully updated with latest commit from Xtrons Repo aayinanew render branch')
     else:
         log_error(f'Something went wrong while updating, check Xtrons Repo if valid or not!')
